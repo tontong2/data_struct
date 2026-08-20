@@ -11,32 +11,41 @@ char *numbers[CAPACITY];
 int people = 0; // 저장된 사람 수
 
 void add(){
-    // names[people] 에는 buf를 바로 할당할 수 없다. buf1,2 는 스택에 할당되어 add()가 return 되면 소멸되기 때문
-    // 따라서 strdup를 사용해 buf에 저장된 문자열을 복제하고 그 복제된 배열의 주소를 names에 저장(연결)한다. 
-    // strudp는 malloc으로 heap에 할당되어 소멸하지 않는다!
-    
     char buf1[BUFFER_SIZE], buf2[BUFFER_SIZE];
     scanf("%s", buf1);
     scanf("%s", buf2);
-
-    names[people] = strdup(buf1);
-    numbers[people] = strdup(buf2);
+    int i=people-1; // 맨마지막 사람 부터
+    // strcmp 둘이 같으면 0을 반환 오른쪽이 크면 - 왼쪽이 크면 +
+    while( i>=0 && strcmp(names[i], buf1) > 0){
+        names[i+1] = names[i];
+        numbers[i+1] = numbers[i];
+        i--;
+    }
+    // 배열의 시작을 지나치거나, 추가하려는 숫자보다 비교하는 숫자가 더 작으면 거기서+1 인덱스에 값 저장
+    names[i+1] = strdup(buf1);
+    numbers[i+1] =strdup(buf2);
     people++;
-
     printf("%s was added successfully. \n", buf1);
+}
+
+int search(char *name){
+    for(int i=0; i<people; i++){
+        if(strcmp(name, names[i]) == 0){
+            return i;
+        }
+    }
+    return -1;
 }
 
 void find(){
     char buf[BUFFER_SIZE];
     scanf("%s", buf);
-    
-    for(int i=0; i<people; i++){
-        if(strcmp(buf, names[i]) == 0){
-            printf("%s\n", numbers[i]);
-            return;
-        }
+    int index = search(buf);
+    if(index == -1){
+        printf("No person named '%s' exist. \n", buf);\
+    }else{
+        printf("%s\n", numbers[index]);
     }
-    printf("No person named '%s' exist. \n", buf);
     return;
 }
 
@@ -51,16 +60,17 @@ void remove(){
     char buf[BUFFER_SIZE];
     scanf("%s", buf);
 
-    for(int i=0; i<people; i++){
-        if(strcmp(buf, names[i]) == 0){
-            names[i] = names[people-1]; // 맨 마지막 사람을 삭제된 자리로 옮긴다 (빈칸 없이 만들기)
-            numbers[i] = names[people-1];
-            people--;
-            printf("%s was deleted succesfully. \n", buf);
-            return; 
-        }
+    int index = search(buf);
+    if(index == -1){
+        printf("No person named '%s' exists.\n", buf);
+        return;
     }
-    printf("No person named '%s' exists. \n", buf);
+
+    for(int j=index; j<people-1; j++){
+        names[j] = names[j+1];
+        numbers[j] = numbers[j+1];
+    }
+    people--;
 }
 
 void load(){
@@ -82,6 +92,26 @@ void load(){
         numbers[people] = strdup(buf2);
         people++;
     }
+    fclose(fp);
+}
+
+void save(){
+    char fileName[BUFFER_SIZE];
+    char tmp[BUFFER_SIZE];
+
+    scanf("%s", tmp);
+    scanf("%s", fileName);
+
+    FILE *fp = fopen(fileName, "w");
+    if(fp == NULL){
+        printf("Open failed. \n");
+        return;
+    }
+
+    for(int i=0; i<people; i++){
+        fprintf(fp, "%s %s\n", names[i], numbers[i]);
+    }
+    fclose(fp);
 }
 
 
@@ -106,6 +136,9 @@ int main() {
         }
         else if(strcmp(command, "load") == 0){
             load();
+        }
+         else if(strcmp(command, "save as") == 0){
+            save();
         }
         else if(strcmp(command, "exit") == 0){
             break;
