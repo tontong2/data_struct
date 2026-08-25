@@ -49,19 +49,18 @@ void init_directory() {
 }
 
 
-// 한 줄 입력받기
-int read_line(char str[], int limit) {
+// 파일로 부터 라인 단위로 읽기 
+int read_line(FILE *fp, char str[], int people) {
     int ch, i = 0;
 
-    while ((ch = getchar()) != '\n' && ch != EOF) {
-        if (i < limit - 1) {
+    while((ch == fgetc(fp) )!= '\n' && ch != EOF){
+        if(i<people){
             str[i++] = ch;
         }
     }
-
     str[i] = '\0';
-
     return i;
+
 }
 
 
