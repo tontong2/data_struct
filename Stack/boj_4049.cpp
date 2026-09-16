@@ -17,6 +17,8 @@ int main(void){
                 s.push(c);
             }
             else if(c == ')'){
+                // s.empty() true일 경우 뒤의 식을 확인 하지 않고 if 문 내로 들어가기 때문에 에러방지
+                // Short-Circuit evaluation
                 if(s.empty() || s.top() != '('){
                     isValid = false;
                     break;
