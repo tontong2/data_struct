@@ -7,9 +7,6 @@ int N, K;
 int board[100002];
 int dist[100002];
 
-
-
-
 int main(void){
     ios::sync_with_stdio(0);
     cin.tie(0);
