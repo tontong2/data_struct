@@ -29,7 +29,7 @@ int main(void){
         factors.push_back(n);
     }
 
-    cout << factors.size() << '\n';
+    cout << factors.size()<< '\n';
     for(auto x : factors){
         cout << x << ' ';
     }
